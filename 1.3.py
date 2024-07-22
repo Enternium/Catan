@@ -261,17 +261,17 @@ pygame.font.init()
 
 players = PA.get_player_info()
 
-surface = pygame.display.set_mode((0,0), pygame.FULLSCREEN) 
+#surface = pygame.display.set_mode((0,0), pygame.FULLSCREEN) 
+surface = pygame.display.set_mode((1440,960)) 
   
 pygame.display.set_caption('Catan Data') 
 
 CONSTANTS = {}
 
-w,l = pygame.display.get_surface().get_size()
-  
-CONSTANTS['Width'] = w
-CONSTANTS['Height'] = l
+CONSTANTS['Width'], CONSTANTS['Height'] = pygame.display.get_surface().get_size()
 CONSTANTS['Players'] = players
+
+print(CONSTANTS['Width'], CONSTANTS['Height'])
 
 BUTTONS = Buttons(CONSTANTS)
 MENU = Menu_Buttons(CONSTANTS)
