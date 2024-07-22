@@ -128,7 +128,7 @@ class Point:
         
     def click(self, mouse, player, structure):
         if self.x - self.radius < mouse[0] < self.x + self.radius:
-            if self.y - self.radius < mouse[1] < self.y + self.radius:
+            if self.y - self.radius*2 < mouse[1] < self.y + self.radius*2:
                 self.assign_player(player, structure)
                 return self.hexes
             
