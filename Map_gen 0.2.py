@@ -180,13 +180,13 @@ running = True
 while running: 
     
     surface.fill((200, 200, 200)) 
-    
-    for row in points_rows:
-        for point in row:
-            pygame.draw.circle(surface, (0,0,0), point, 4)
             
     for hexagon in HEXES:
         hexagon.draw(surface)
+        
+    for row in points_rows:
+        for point in row:
+            pygame.draw.circle(surface, (0,0,0), point, 4)
         
         
     for event in pygame.event.get(): 
