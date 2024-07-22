@@ -8,6 +8,7 @@ Created on Sat Mar  2 13:28:12 2024
 import pygame
 import numpy as np
 import Player_Analysis as PA
+import MapGen as MG
 
 
 # GitHub Test
@@ -277,6 +278,9 @@ BUTTONS = Buttons(CONSTANTS)
 MENU = Menu_Buttons(CONSTANTS)
 MAIN_TAB = Tab(CONSTANTS)
 
+
+MAP = MG.Map(50, (MAIN_TAB.x + MAIN_TAB.width/2, MAIN_TAB.y + MAIN_TAB.height/2))
+
 # Variable to keep our game loop running 
 running = 'DAS'
   
@@ -299,6 +303,9 @@ while running:
     elif running == 'Robber':
         for player in CONSTANTS['Players']:
             player.draw_robber(surface)
+            
+    elif running == 'Map':
+        MAP.draw(surface)
     
     for event in pygame.event.get(): 
       
@@ -315,6 +322,9 @@ while running:
                 
             elif event.key == pygame.K_r:
                 running = 'Robber'
+                
+            elif event.key == pygame.K_m:
+                running = 'Map'
                 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()

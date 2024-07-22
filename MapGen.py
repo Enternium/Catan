@@ -9,17 +9,7 @@ import pygame
 import math
 import random
 
-pygame.init()
 
-#surface = pygame.display.set_mode((0,0), pygame.FULLSCREEN) 
-surface = pygame.display.set_mode((1440,960))  
-
-pygame.display.set_caption('Catan Data') 
-
-CONSTANTS = {}
-
-CONSTANTS['Width'], CONSTANTS['Height'] = pygame.display.get_surface().get_size()
- 
 
 
 class Hexagon:
@@ -29,15 +19,15 @@ class Hexagon:
         
         if row <= 4:
         
-            self.coordinates = [points_rows[row][column], points_rows[row+1][column+1], points_rows[row+2][column+1], points_rows[row+3][column+1], points_rows[row+2][column], points_rows[row+1][column]]
+            self.coordinates = [points_rows[row][column].coord, points_rows[row+1][column+1].coord, points_rows[row+2][column+1].coord, points_rows[row+3][column+1].coord, points_rows[row+2][column].coord, points_rows[row+1][column].coord]
         
         elif row == 6:
             
-            self.coordinates = [points_rows[row][column], points_rows[row+1][column+1], points_rows[row+2][column+1], points_rows[row+3][column], points_rows[row+2][column], points_rows[row+1][column]]
+            self.coordinates = [points_rows[row][column].coord, points_rows[row+1][column+1].coord, points_rows[row+2][column+1].coord, points_rows[row+3][column].coord, points_rows[row+2][column].coord, points_rows[row+1][column].coord]
         
         else:
             
-            self.coordinates = [points_rows[row][column+1], points_rows[row+1][column+1], points_rows[row+2][column+1], points_rows[row+3][column], points_rows[row+2][column], points_rows[row+1][column]]
+            self.coordinates = [points_rows[row][column+1].coord, points_rows[row+1][column+1].coord, points_rows[row+2][column+1].coord, points_rows[row+3][column].coord, points_rows[row+2][column].coord, points_rows[row+1][column].coord]
 
         self.resource = resource
         self.number = number
@@ -107,7 +97,50 @@ def seed_maker():
     random.shuffle(numbers)
     
     return temp, numbers
+
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        
+        self.coord = [x,y]
+        
+        self.colour = (0,0,0)
+        
+    def draw(self, surface):
+        pygame.draw.circle(surface, self.colour, (self.x, self.y), 4)
+
+
+def point_generator(edge_length, center):
+
+    # GENERATE POINTS -------------------------------------------
+        
+    short_diagonal = edge_length * math.sqrt(3)
     
+    
+    starting_x = center[0] - 2*short_diagonal
+    starting_y = center[1] - 11/2*edge_length
+    points_rows = []
+    
+    
+    ranges = [5,6,6,7,7,8,8,9,9,8,8,7,7,6,6,5]
+    xs = [0,1,1,2,2,3,3,4,4,3,3,2,2,1,1,0]
+    ys = [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22]
+    
+    for i in range(len(ranges)):
+        temp = []
+        for j in range(ranges[i]):
+            temp.append(Point(starting_x - short_diagonal*xs[i]/2 + j*short_diagonal, starting_y + edge_length*ys[i]/2))
+        points_rows.append(temp)
+    
+    pure_points_list = []
+    for i in range(len(points_rows)):
+        for j in range(len(points_rows[i])):
+            pure_points_list.append(points_rows[i][j])
+            
+    return points_rows, pure_points_list   
+
 
 def map_maker(edge_length, pure_points_list, points_rows):
     # GENERATE MAP ------------------------------
@@ -134,7 +167,7 @@ def map_maker(edge_length, pure_points_list, points_rows):
         for point in pure_points_list:
             nums = []
             for hexagon in HEXES:
-                if point in hexagon.coordinates:
+                if point.coord in hexagon.coordinates:
                     nums.append(hexagon.number)
             count_sixes = nums.count(6)
             count_eights = nums.count(8)
@@ -147,80 +180,67 @@ def map_maker(edge_length, pure_points_list, points_rows):
     return HEXES
     
 
-def point_generator(edge_length, center):
-
-    # GENERATE POINTS -------------------------------------------
+class Map:
+    def __init__(self, edge_length, center):
+        self.edge_length = edge_length
+        self.center = center
+                    
+        self.points_rows, self.pure_points_list = point_generator(self.edge_length, self.center)
         
-    short_diagonal = edge_length * math.sqrt(3)
-    
-    
-    starting_x = center[0] - 2*short_diagonal
-    starting_y = center[1] - 11/2*edge_length
-    points_rows = []
-    
-    
-    ranges = [5,6,6,7,7,8,8,9,9,8,8,7,7,6,6,5]
-    xs = [0,1,1,2,2,3,3,4,4,3,3,2,2,1,1,0]
-    ys = [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22]
-    
-    for i in range(len(ranges)):
-        temp = []
-        for j in range(ranges[i]):
-            temp.append([starting_x - short_diagonal*xs[i]/2 + j*short_diagonal, starting_y + edge_length*ys[i]/2])
-        points_rows.append(temp)
-    
-    pure_points_list = []
-    for i in range(len(points_rows)):
-        for j in range(len(points_rows[i])):
-            pure_points_list.append(points_rows[i][j])
-            
-    return points_rows, pure_points_list
-
-
-
-edge_length = 80
-
-points_rows, pure_points_list = point_generator(edge_length, (CONSTANTS['Width']/2, CONSTANTS['Height']/2))
-
-HEXES = map_maker(edge_length, pure_points_list, points_rows)
-
-
-
-running = True
-  
-# game loop 
-while running: 
-    
-    surface.fill((200, 200, 200)) 
-            
-    for hexagon in HEXES:
-        hexagon.draw(surface)
+        self.gen_map()
         
-    for row in points_rows:
-        for point in row:
-            pygame.draw.circle(surface, (0,0,0), point, 4)
+    def gen_map(self):
+        self.HEXES = map_maker(self.edge_length, self.pure_points_list, self.points_rows)
         
+    def draw(self, surface):
+        for hexagon in self.HEXES:
+            hexagon.draw(surface)
         
-    for event in pygame.event.get(): 
+        for point in self.pure_points_list:
+            point.draw(surface)
+
+
+
+
+def Run_here():
+    pygame.init()
+    
+    #surface = pygame.display.set_mode((0,0), pygame.FULLSCREEN) 
+    surface = pygame.display.set_mode((1440,960))  
+    
+    pygame.display.set_caption('Catan Data') 
+    
+    CONSTANTS = {}
+    
+    CONSTANTS['Width'], CONSTANTS['Height'] = pygame.display.get_surface().get_size()
+    running = True
       
-        # Check for QUIT event       
-        if event.type == pygame.QUIT: 
-            running = False
-            
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                running = False
-            elif event.key == pygame.K_r:
-                HEXES = map_maker(edge_length, pure_points_list, points_rows)
-
-                
-                
-                
+    MAP = Map(80, (CONSTANTS['Width']/2, CONSTANTS['Height']/2))
     
-    pygame.display.flip()             
-pygame.quit()
-
-
-
-
+    # game loop 
+    while running: 
+        
+        surface.fill((200, 200, 200)) 
+                
+        MAP.draw(surface)
+            
+        for event in pygame.event.get(): 
+          
+            # Check for QUIT event       
+            if event.type == pygame.QUIT: 
+                running = False
+                
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                elif event.key == pygame.K_r:
+                    MAP.gen_map()
+    
+                    
+                    
+                    
+        
+        pygame.display.flip()             
+    pygame.quit()
+    
 
