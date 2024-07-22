@@ -11,8 +11,9 @@ import random
 
 pygame.init()
 
-surface = pygame.display.set_mode((0,0), pygame.FULLSCREEN) 
-  
+#surface = pygame.display.set_mode((0,0), pygame.FULLSCREEN) 
+surface = pygame.display.set_mode((1440,960))  
+
 pygame.display.set_caption('Catan Data') 
 
 CONSTANTS = {}
@@ -63,7 +64,10 @@ class Hexagon:
             else:
                 num_col = (20,10,0)
                 
-            self.font = pygame.font.SysFont('Impact Regular', 70)
+            self.font_size = int(edge_length * (3/4))
+            self.circle_size = int(edge_length * (3/8))
+                
+            self.font = pygame.font.SysFont('Impact Regular', self.font_size)
             self.text = self.font.render(str(number), False, num_col)
             self.text_rect = self.text.get_rect(center = (self.coordinates[0][0], self.coordinates[0][1] + edge_length))
             self.num_x = self.text_rect[0] + self.text_rect[2]/2
@@ -76,7 +80,7 @@ class Hexagon:
         pygame.draw.polygon(surface, (10,10,10), self.coordinates, width = 1)
         
         if self.number:
-            pygame.draw.circle(surface, (231,207,158), (self.num_x, self.num_y), 30)
+            pygame.draw.circle(surface, (231,207,158), (self.num_x, self.num_y), self.circle_size)
             surface.blit(self.text, self.text_rect)
 
 
@@ -142,33 +146,41 @@ def map_maker(edge_length, pure_points_list, points_rows):
     
     return HEXES
     
-# GENERATE POINTS -------------------------------------------
 
-edge_length = 85
+def point_generator(edge_length, center):
 
-short_diagonal = edge_length * math.sqrt(3)
+    # GENERATE POINTS -------------------------------------------
+        
+    short_diagonal = edge_length * math.sqrt(3)
+    
+    
+    starting_x = center[0] - 2*short_diagonal
+    starting_y = center[1] - 11/2*edge_length
+    points_rows = []
+    
+    
+    ranges = [5,6,6,7,7,8,8,9,9,8,8,7,7,6,6,5]
+    xs = [0,1,1,2,2,3,3,4,4,3,3,2,2,1,1,0]
+    ys = [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22]
+    
+    for i in range(len(ranges)):
+        temp = []
+        for j in range(ranges[i]):
+            temp.append([starting_x - short_diagonal*xs[i]/2 + j*short_diagonal, starting_y + edge_length*ys[i]/2])
+        points_rows.append(temp)
+    
+    pure_points_list = []
+    for i in range(len(points_rows)):
+        for j in range(len(points_rows[i])):
+            pure_points_list.append(points_rows[i][j])
+            
+    return points_rows, pure_points_list
 
 
-starting_x = CONSTANTS['Width']/2 - 2*short_diagonal
-starting_y = CONSTANTS['Height']/2 - 11/2*edge_length
-points_rows = []
 
+edge_length = 80
 
-ranges = [5,6,6,7,7,8,8,9,9,8,8,7,7,6,6,5]
-xs = [0,1,1,2,2,3,3,4,4,3,3,2,2,1,1,0]
-ys = [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22]
-
-for i in range(len(ranges)):
-    temp = []
-    for j in range(ranges[i]):
-        temp.append([starting_x - short_diagonal*xs[i]/2 + j*short_diagonal, starting_y + edge_length*ys[i]/2])
-    points_rows.append(temp)
-
-pure_points_list = []
-for i in range(len(points_rows)):
-    for j in range(len(points_rows[i])):
-        pure_points_list.append(points_rows[i][j])
-
+points_rows, pure_points_list = point_generator(edge_length, (CONSTANTS['Width']/2, CONSTANTS['Height']/2))
 
 HEXES = map_maker(edge_length, pure_points_list, points_rows)
 

@@ -9,6 +9,7 @@ import pygame
 import numpy as np
 import Player_Analysis as PA
 
+
 # GitHub Test
 
 class Tab:
@@ -271,7 +272,6 @@ CONSTANTS = {}
 CONSTANTS['Width'], CONSTANTS['Height'] = pygame.display.get_surface().get_size()
 CONSTANTS['Players'] = players
 
-print(CONSTANTS['Width'], CONSTANTS['Height'])
 
 BUTTONS = Buttons(CONSTANTS)
 MENU = Menu_Buttons(CONSTANTS)
