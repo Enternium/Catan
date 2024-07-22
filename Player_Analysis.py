@@ -67,6 +67,7 @@ class Player:
         self.font = pygame.font.SysFont('Impact Regular', 100)
         self.mini_font = pygame.font.SysFont('Impact Regular', 60)
         self.tiny_font = pygame.font.SysFont('Impact Regular', 50)
+        self.baby_font = pygame.font.SysFont('Impact Regular', 26)
         
         self.name_text = self.font.render(self.name, False, self.font_colour)
         width, height = self.font.size(self.name)
@@ -416,4 +417,62 @@ def get_player_info():
         
     return players
             
+          
+class Player_Map_Button:
+    def __init__(self, player, CONSTANTS, MAIN_TAB, position):
+        self.player = player
+        self.con = CONSTANTS
+        self.MT = MAIN_TAB
+        self.position = position
+        
+        self.colour = self.player.COLOUR
+        self.font_colour = self.player.font_colour
+        self.height = self.MT.height/6
+        self.width = self.MT.width*11/48
+        self.x = self.MT.x + self.MT.width - self.width
+        self.y = self.MT.y + self.height*self.position
+        
+        self.name_text = self.player.mini_font.render(self.player.name, False, self.font_colour)
+        self.name_text_rect = self.name_text.get_rect(center = (self.x + self.width/2, self.y + self.height/4))
+        
+        self.button_texts = [self.player.baby_font.render('Add Settlement', False, self.font_colour), self.player.baby_font.render('Add City', False, self.font_colour)]
+        self.button_texts_rects = [self.button_texts[0].get_rect(center = (self.x + self.width/4, self.y + self.height*3/4)), self.button_texts[1].get_rect(center = (self.x + self.width*3/4, self.y + self.height*3/4))]
+        
+    def click(self, mouse):
+        if self.y + self.height/2 < mouse[1] < self.y + self.height:
+            if self.x < mouse[0] < self.x + self.width/2:
+                return 'Settlement', self.player
+            elif self.x + self.width/2 < mouse[0] < self.x + self.width:
+                return 'City', self.player
             
+        return False, False
+    
+    def draw(self, surface, player_assigner, structure_assigner):
+        
+        pygame.draw.rect(surface, self.colour, (self.x, self.y, self.width, self.height))
+        
+        pygame.draw.rect(surface, (0,0,0), (self.x, self.y, self.width, self.height), width = 2)
+        
+        if player_assigner == self.player and structure_assigner == 'Settlement':
+            pygame.draw.rect(surface, (0,0,0), (self.x, self.y + self.height/2, self.width/2, self.height/2), width = 6)
+        else:
+            pygame.draw.rect(surface, (0,0,0), (self.x, self.y + self.height/2, self.width/2, self.height/2), width = 2)
+            
+        if player_assigner == self.player and structure_assigner == 'City':
+            pygame.draw.rect(surface, (0,0,0), (self.x + self.width/2, self.y + self.height/2, self.width/2, self.height/2), width = 6)
+        else:
+            pygame.draw.rect(surface, (0,0,0), (self.x + self.width/2, self.y + self.height/2, self.width/2, self.height/2), width = 2)
+            
+            
+        surface.blit(self.name_text, self.name_text_rect)
+        
+        for i in range(len(self.button_texts)):
+            surface.blit(self.button_texts[i], self.button_texts_rects[i])
+        
+        
+        
+def gen_Player_Map_Button_list(player_list, CONSTANTS, MAIN_TAB):
+    temp = []
+    for i in range(len(player_list)):
+        temp.append(Player_Map_Button(player_list[i], CONSTANTS, MAIN_TAB, i))
+    return temp

@@ -108,8 +108,39 @@ class Point:
         
         self.colour = (0,0,0)
         
+        self.hexes = []
+        
+        self.player = False
+        self.structure = False
+        
+        self.radius = 4
+        
+    def clear_hexes(self):
+        self.hexes = []
+    
+    def allocate_hex(self, hexagon):
+        self.hexes.append(hexagon)
+        
+    def assign_player(self, player, structure):
+        self.player = player
+        self.colour = player.COLOUR
+        self.structure = structure
+        
+    def click(self, mouse, player, structure):
+        if self.x - self.radius < mouse[0] < self.x + self.radius:
+            if self.y - self.radius < mouse[1] < self.y + self.radius:
+                self.assign_player(player, structure)
+                return self.hexes
+            
+        return False
+        
     def draw(self, surface):
-        pygame.draw.circle(surface, self.colour, (self.x, self.y), 4)
+        if self.structure == 'Settlement':
+            pygame.draw.circle(surface, self.colour, (self.x, self.y), self.radius*3/2)
+        elif self.structure == 'City':
+            pygame.draw.circle(surface, self.colour, (self.x, self.y), self.radius*4/2)
+        else:
+            pygame.draw.circle(surface, self.colour, (self.x, self.y), self.radius)
 
 
 def point_generator(edge_length, center):
@@ -191,6 +222,17 @@ class Map:
         
     def gen_map(self):
         self.HEXES = map_maker(self.edge_length, self.pure_points_list, self.points_rows)
+        
+        for point in self.pure_points_list:
+            point.clear_hexes()
+        
+        self.allocate_hexes_to_points()
+        
+    def allocate_hexes_to_points(self):
+        for point in self.pure_points_list:
+            for hexagon in self.HEXES:
+                if point.coord in hexagon.coordinates:
+                    point.allocate_hex(hexagon)
         
     def draw(self, surface):
         for hexagon in self.HEXES:

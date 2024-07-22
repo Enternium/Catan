@@ -273,10 +273,14 @@ CONSTANTS = {}
 CONSTANTS['Width'], CONSTANTS['Height'] = pygame.display.get_surface().get_size()
 CONSTANTS['Players'] = players
 
-
 BUTTONS = Buttons(CONSTANTS)
 MENU = Menu_Buttons(CONSTANTS)
 MAIN_TAB = Tab(CONSTANTS)
+
+MAP_BUTTONS = PA.gen_Player_Map_Button_list(CONSTANTS['Players'], CONSTANTS, MAIN_TAB)
+
+structure_assigner = False
+player_assigner = False
 
 
 MAP = MG.Map(50, (MAIN_TAB.x + MAIN_TAB.width/2, MAIN_TAB.y + MAIN_TAB.height/2))
@@ -306,6 +310,8 @@ while running:
             
     elif running == 'Map':
         MAP.draw(surface)
+        for button in MAP_BUTTONS:
+            button.draw(surface, player_assigner, structure_assigner)
     
     for event in pygame.event.get(): 
       
@@ -358,6 +364,43 @@ while running:
                                     player.add_resource(returned[1][i], returned[0][i])
                                     
                     running = 'PAS'
+                    
+            elif running == 'Map':
+                
+                if mouse[0] > MAIN_TAB.x + MAIN_TAB.width - MAIN_TAB.width*11/48:
+                    for button in MAP_BUTTONS:
+                        
+                        structure_type, temp_player = button.click(mouse)
+                        
+                        # check if clicked
+                        if structure_type:
+                            
+                            # check for unclicking
+                            if temp_player == player_assigner:
+                                if structure_type == structure_assigner:
+                                    structure_assigner = False
+                                    player_assigner = False
+                                    
+                            # else assign values
+                            structure_assigner = structure_type
+                            player_assigner = temp_player
+                            break
+                
+                elif structure_assigner:
+                    for point in MAP.pure_points_list:
+                        hexes = point.click(mouse, player_assigner, structure_assigner)
+                        if hexes:
+                            for player in CONSTANTS['Players']:
+                                if player == player_assigner:
+                                    for hexagon in hexes:
+                                        player.add_resource(hexagon.resource, hexagon.number)
+                                    break
+                            structure_assigner = False
+                            player_assigner = False
+                            break
+
+                
+                
                 
                 
     
