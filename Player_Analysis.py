@@ -48,6 +48,12 @@ class Player:
         self.wheat_exp = 0
         self.rock_exp = 0
         
+        self.wood_robbed = 0
+        self.brick_robbed = 0
+        self.sheep_robbed = 0
+        self.wheat_robbed = 0
+        self.rock_robbed = 0
+        
         self.exp_multipliers = np.zeros(11)
         
         self.exp_multipliers[0] = 0.027777777777777800
@@ -79,13 +85,18 @@ class Player:
         self.create_numbers()
         shift = 150
         self.resource_numbers_texts_rects = [(60 + self.position*self.tab_width + shift, 160), (60 + self.position*self.tab_width + shift, 190), (60 + self.position*self.tab_width + shift, 220), (60 + self.position*self.tab_width + shift, 250), (60 + self.position*self.tab_width + shift, 280), (60 + self.position*self.tab_width + shift, 330)]
-        
+        self.robbed_numbers_texts_rects = [(60 + self.position*self.tab_width + shift, 380), (60 + self.position*self.tab_width + shift, 410), (60 + self.position*self.tab_width + shift, 440), (60 + self.position*self.tab_width + shift, 470), (60 + self.position*self.tab_width + shift, 500), (60 + self.position*self.tab_width + shift, 550)]
+
         self.create_settlement_list()
         
     def create_numbers(self):
         
         total = self.wood_count + self.brick_count + self.sheep_count + self.wheat_count + self.rock_count
         self.resource_numbers_texts = [self.tiny_font.render(str(self.wood_count), False, self.font_colour), self.tiny_font.render(str(self.brick_count), False, self.font_colour), self.tiny_font.render(str(self.sheep_count), False, self.font_colour), self.tiny_font.render(str(self.wheat_count), False, self.font_colour), self.tiny_font.render(str(self.rock_count), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
+        
+        total = self.wood_robbed + self.brick_robbed + self.sheep_robbed + self.wheat_robbed + self.rock_robbed
+        self.robbed_numbers_texts = [self.tiny_font.render(str(self.wood_robbed), False, self.font_colour), self.tiny_font.render(str(self.brick_robbed), False, self.font_colour), self.tiny_font.render(str(self.sheep_robbed), False, self.font_colour), self.tiny_font.render(str(self.wheat_robbed), False, self.font_colour), self.tiny_font.render(str(self.rock_robbed), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
+
         
     def create_settlement_list(self):
         self.settlements_texts = []
@@ -157,6 +168,29 @@ class Player:
             self.rock_nums.append(number)
             
         self.create_settlement_list()
+        
+    def robbed(self, resource, amount):
+        
+        if resource == 'wood':
+            self.wood_robbed += amount
+            self.wood_count -= amount
+            print("Success")
+        elif resource == 'brick':
+            self.brick_robbed += amount
+            self.brick_count -= amount
+            print("Success")
+        elif resource == 'sheep':
+            self.sheep_robbed += amount
+            self.sheep_count -= amount
+            print("Success")
+        elif resource == 'wheat':
+            self.wheat_robbed += amount
+            self.wheat_count -= amount
+            print("Success")
+        elif resource == 'rock':
+            self.rock_robbed += amount
+            self.rock_count -= amount
+            print("Success")
     
     def click(self, mouse):
         if 60 + (self.position + 0.5)*self.tab_width - 27 < mouse[0] < 60 + (self.position + 0.5)*self.tab_width + 27:
@@ -172,10 +206,17 @@ class Player:
             surface.blit(self.resource_texts[i], self.resource_text_rects[i])
             surface.blit(self.resource_numbers_texts[i], self.resource_numbers_texts_rects[i])
             
+        for i in range(len(self.robbed_numbers_texts)):
+            #surface.blit(self.resource_texts[i], self.resource_text_rects[i])
+            surface.blit(self.robbed_numbers_texts[i], self.robbed_numbers_texts_rects[i])
+            
+        '''
+        # Draw add button -------------------------    
         pygame.draw.circle(surface, (0,150,0), (60 + (self.position + 0.5)*self.tab_width, 600), 54)
         pygame.draw.circle(surface, (0,250,0), (60 + (self.position + 0.5)*self.tab_width, 600), 50)
         pygame.draw.rect(surface, (0,0,0), (60 + (self.position + 0.5)*self.tab_width - 15, 597, 30, 6))
         pygame.draw.rect(surface, (0,0,0), (60 + (self.position + 0.5)*self.tab_width - 3, 585, 6, 30))
+        '''
         
     def draw_robber(self, surface):
         pygame.draw.rect(surface, self.COLOUR, (60 + self.position*self.tab_width, 80, self.tab_width, 600))
@@ -476,3 +517,53 @@ def gen_Player_Map_Button_list(player_list, CONSTANTS, MAIN_TAB):
     for i in range(len(player_list)):
         temp.append(Player_Map_Button(player_list[i], CONSTANTS, MAIN_TAB, i))
     return temp
+
+class Robber_Map_Button:
+    def __init__(self, CONSTANTS, MAIN_TAB):
+        self.con = CONSTANTS
+        self.MT = MAIN_TAB
+        
+        self.colour = (50,50,50)
+        self.font_colour = (250,250,250)
+        self.height = self.MT.height/6
+        self.width = self.MT.width*11/48
+        self.x = self.MT.x
+        self.y = self.MT.y
+        
+        self.mini_font = pygame.font.SysFont('Impact Regular', 60)
+        self.baby_font = pygame.font.SysFont('Impact Regular', 26)
+        
+        self.name_text = self.mini_font.render('Robber', False, self.font_colour)
+        self.name_text_rect = self.name_text.get_rect(center = (self.x + self.width/2, self.y + self.height/4))
+        
+        self.button_texts = [self.baby_font.render('Move Robber', False, self.font_colour), self.baby_font.render('Move Pirate', False, self.font_colour)]
+        self.button_texts_rects = [self.button_texts[0].get_rect(center = (self.x + self.width/4, self.y + self.height*3/4)), self.button_texts[1].get_rect(center = (self.x + self.width*3/4, self.y + self.height*3/4))]
+        
+    def click(self, mouse):
+        if self.y + self.height/2 < mouse[1] < self.y + self.height:
+            if self.x < mouse[0] < self.x + self.width/2:
+                return True
+        else:
+            return False
+    
+    def draw(self, surface, robber_assigner, pirate_assigner):
+        
+        pygame.draw.rect(surface, self.colour, (self.x, self.y, self.width, self.height))
+        
+        pygame.draw.rect(surface, (0,0,0), (self.x, self.y, self.width, self.height), width = 2)
+        
+        if robber_assigner:
+            pygame.draw.rect(surface, (0,0,0), (self.x, self.y + self.height/2, self.width/2, self.height/2), width = 6)
+        else:
+            pygame.draw.rect(surface, (0,0,0), (self.x, self.y + self.height/2, self.width/2, self.height/2), width = 2)
+            
+        if pirate_assigner:
+            pygame.draw.rect(surface, (0,0,0), (self.x + self.width/2, self.y + self.height/2, self.width/2, self.height/2), width = 6)
+        else:
+            pygame.draw.rect(surface, (0,0,0), (self.x + self.width/2, self.y + self.height/2, self.width/2, self.height/2), width = 2)
+            
+            
+        surface.blit(self.name_text, self.name_text_rect)
+        
+        for i in range(len(self.button_texts)):
+            surface.blit(self.button_texts[i], self.button_texts_rects[i])

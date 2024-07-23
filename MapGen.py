@@ -15,6 +15,8 @@ import random
 class Hexagon:
     def __init__(self, points_rows, row, column, resource, number, edge_length):
         
+        self.robbed = False
+        
         row *= 2
         
         if row <= 4:
@@ -59,19 +61,30 @@ class Hexagon:
                 
             self.font = pygame.font.SysFont('Impact Regular', self.font_size)
             self.text = self.font.render(str(number), False, num_col)
+            self.robbed_text = self.font.render(str(number), False, (250,250,250))
             self.text_rect = self.text.get_rect(center = (self.coordinates[0][0], self.coordinates[0][1] + edge_length))
             self.num_x = self.text_rect[0] + self.text_rect[2]/2
             self.num_y = self.text_rect[1] + self.text_rect[3]/2
             
             
+    def click(self, mouse):
+        if self.number:
+            if (mouse[0] - self.num_x)**2 + (mouse[1] - self.num_y)**2 < self.circle_size**2:
+                return True
+        return False
+    
     def draw(self, surface):
         
         pygame.draw.polygon(surface, self.colour, self.coordinates)
         pygame.draw.polygon(surface, (10,10,10), self.coordinates, width = 1)
         
         if self.number:
-            pygame.draw.circle(surface, (231,207,158), (self.num_x, self.num_y), self.circle_size)
-            surface.blit(self.text, self.text_rect)
+            if self.robbed:
+                pygame.draw.circle(surface, (0,0,0), (self.num_x, self.num_y), self.circle_size)
+                surface.blit(self.robbed_text, self.text_rect)
+            else:
+                pygame.draw.circle(surface, (231,207,158), (self.num_x, self.num_y), self.circle_size)
+                surface.blit(self.text, self.text_rect)
 
 
 
@@ -239,6 +252,26 @@ class Map:
                 if point.coord in hexagon.coordinates:
                     point.allocate_hex(hexagon)
         
+    def calc_robbery(self, players, number):
+        for point in self.pure_points_list:
+            if point.player:
+                for hexagon in point.hexes:
+                    if hexagon.robbed:
+                        if hexagon.number == number:
+                            for player in players:
+                                if player == point.player:
+                                    
+                                    if point.structure == 'Settlement':
+                                        amount = 1
+                                    else:
+                                        amount = 2
+                                    
+                                    player.robbed(hexagon.resource, amount)
+                                    
+                                    print(f'{player.name} has lost {amount} {hexagon.resource}')
+                                    
+        return players
+    
     def draw(self, surface):
         for hexagon in self.HEXES:
             hexagon.draw(surface)

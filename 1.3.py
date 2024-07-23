@@ -278,10 +278,12 @@ MENU = Menu_Buttons(CONSTANTS)
 MAIN_TAB = Tab(CONSTANTS)
 
 MAP_BUTTONS = PA.gen_Player_Map_Button_list(CONSTANTS['Players'], CONSTANTS, MAIN_TAB)
+ROBBER_BUTTONS = PA.Robber_Map_Button(CONSTANTS, MAIN_TAB)
 
 structure_assigner = False
 player_assigner = False
-
+robber_assigner = False
+pirate_assigner = False
 
 MAP = MG.Map(50, (MAIN_TAB.x + MAIN_TAB.width/2, MAIN_TAB.y + MAIN_TAB.height/2))
 
@@ -312,6 +314,7 @@ while running:
         MAP.draw(surface)
         for button in MAP_BUTTONS:
             button.draw(surface, player_assigner, structure_assigner)
+        ROBBER_BUTTONS.draw(surface, robber_assigner, pirate_assigner)
     
     for event in pygame.event.get(): 
       
@@ -343,6 +346,7 @@ while running:
                 if number:
                     for player in CONSTANTS['Players']:
                         player.turn(number)
+                    CONSTANTS['Players'] = MAP.calc_robbery(CONSTANTS['Players'], number)
                 
             elif running == 'PAS':
                 if 573 < mouse[1] < 627:
@@ -382,8 +386,24 @@ while running:
                                     player_assigner = False
                                     
                             # else assign values
-                            structure_assigner = structure_type
-                            player_assigner = temp_player
+                            else:
+                                structure_assigner = structure_type
+                                player_assigner = temp_player
+                                break
+                
+                elif ROBBER_BUTTONS.click(mouse):
+                    if robber_assigner:
+                        robber_assigner = False
+                    else:
+                        robber_assigner = True
+                        
+                elif robber_assigner:
+                    for hexagon in MAP.HEXES:
+                        if hexagon.click(mouse):
+                            for hexa in MAP.HEXES:
+                                hexa.robbed = False
+                            hexagon.robbed = True
+                            robber_assigner = False
                             break
                 
                 elif structure_assigner:
