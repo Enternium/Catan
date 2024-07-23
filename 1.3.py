@@ -226,12 +226,12 @@ class Menu_Buttons:
         self.height = 60
         
         self.mini_font = pygame.font.SysFont('Impact Regular', 60)
-        self.texts = [self.mini_font.render('Short Term', False, (0,0,0)), self.mini_font.render('Long Term', False, (0,0,0)), self.mini_font.render('Player', False, (0,0,0))]
+        self.texts = [self.mini_font.render('Short Term', False, (0,0,0)), self.mini_font.render('Map', False, (0,0,0)), self.mini_font.render('Player', False, (0,0,0))]
 
     def check_button_colour(self, running):
         if running == 'DAS':
             self.colours = [(150,150,150), (255,255,255), (255,255,255)]
-        elif running == 'Historical':
+        elif running == 'Map':
             self.colours = [(255,255,255), (150,150,150), (255,255,255)]
         elif running == 'PAS':
             self.colours = [(255,255,255), (255,255,255), (150,150,150)]
@@ -239,7 +239,7 @@ class Menu_Buttons:
             self.colours = [(255,255,255), (255,255,255), (255,255,255)]
             
     def click(self, mouse_pos, running):
-        outcomes = ['DAS', 'Historical', 'PAS']
+        outcomes = ['DAS', 'Map', 'PAS']
         
         if self.y < mouse[1] < self.y + self.height:
             for i in [0,1,2]:
@@ -302,14 +302,7 @@ while running:
     if running == 'PAS':
         for player in CONSTANTS['Players']:
             player.draw_tab(surface)
-            
-    elif running == 'ADD_1':
-        adding_tab.draw(surface)
-        
-    elif running == 'Robber':
-        for player in CONSTANTS['Players']:
-            player.draw_robber(surface)
-            
+                                
     elif running == 'Map':
         MAP.draw(surface)
         for button in MAP_BUTTONS:
@@ -328,12 +321,7 @@ while running:
                 
             elif event.key == pygame.K_BACKSPACE:
                 BUTTONS.remove_last()
-                
-            elif event.key == pygame.K_r:
-                running = 'Robber'
-                
-            elif event.key == pygame.K_m:
-                running = 'Map'
+
                 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pos()
@@ -348,26 +336,6 @@ while running:
                         player.turn(number)
                     CONSTANTS['Players'] = MAP.calc_robbery(CONSTANTS['Players'], number)
                 
-            elif running == 'PAS':
-                if 573 < mouse[1] < 627:
-                    for player in CONSTANTS['Players']:
-                        name = player.click(mouse)
-                        if name:
-                            adding_tab = PA.Adding_Tab(CONSTANTS)
-                            running = 'ADD_1'
-                            break
-            
-            elif running == 'ADD_1':
-                returned = adding_tab.click(mouse)
-                
-                if returned:
-                    for player in CONSTANTS['Players']:
-                        if player.name == name:
-                            for i in range(3):
-                                if returned[0][i] != 0:
-                                    player.add_resource(returned[1][i], returned[0][i])
-                                    
-                    running = 'PAS'
                     
             elif running == 'Map':
                 

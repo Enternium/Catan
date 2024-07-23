@@ -268,7 +268,6 @@ class Map:
                                     
                                     player.robbed(hexagon.resource, amount)
                                     
-                                    print(f'{player.name} has lost {amount} {hexagon.resource}')
                                     
         return players
     

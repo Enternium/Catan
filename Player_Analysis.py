@@ -87,7 +87,6 @@ class Player:
         self.resource_numbers_texts_rects = [(60 + self.position*self.tab_width + shift, 160), (60 + self.position*self.tab_width + shift, 190), (60 + self.position*self.tab_width + shift, 220), (60 + self.position*self.tab_width + shift, 250), (60 + self.position*self.tab_width + shift, 280), (60 + self.position*self.tab_width + shift, 330)]
         self.robbed_numbers_texts_rects = [(60 + self.position*self.tab_width + shift, 380), (60 + self.position*self.tab_width + shift, 410), (60 + self.position*self.tab_width + shift, 440), (60 + self.position*self.tab_width + shift, 470), (60 + self.position*self.tab_width + shift, 500), (60 + self.position*self.tab_width + shift, 550)]
 
-        self.create_settlement_list()
         
     def create_numbers(self):
         
@@ -96,22 +95,6 @@ class Player:
         
         total = self.wood_robbed + self.brick_robbed + self.sheep_robbed + self.wheat_robbed + self.rock_robbed
         self.robbed_numbers_texts = [self.tiny_font.render(str(self.wood_robbed), False, self.font_colour), self.tiny_font.render(str(self.brick_robbed), False, self.font_colour), self.tiny_font.render(str(self.sheep_robbed), False, self.font_colour), self.tiny_font.render(str(self.wheat_robbed), False, self.font_colour), self.tiny_font.render(str(self.rock_robbed), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
-
-        
-    def create_settlement_list(self):
-        self.settlements_texts = []
-        self.settlements_texts_rects = []
-        
-        list_ = [self.wood_nums, self.brick_nums, self.sheep_nums, self.wheat_nums, self.rock_nums]
-        words = ['Wood', 'Brick', 'Sheep', 'Wheat', 'Rock']
-        
-        for j in range(5):
-            for i in range(len(list_[j])):
-                self.settlements_texts.append(self.tiny_font.render(f'{words[j]} {list_[j][i]}', False, self.font_colour))
-
-        for i in range(len(self.settlements_texts)):
-            self.settlements_texts_rects.append((60 + self.position*self.tab_width, 160 + i*30))
-            
     
     def turn(self, dice_total):
         
@@ -166,32 +149,27 @@ class Player:
             
         elif resource == 'rock':
             self.rock_nums.append(number)
-            
-        self.create_settlement_list()
-        
+                    
     def robbed(self, resource, amount):
         
         if resource == 'wood':
             self.wood_robbed += amount
             self.wood_count -= amount
-            print("Success")
         elif resource == 'brick':
             self.brick_robbed += amount
             self.brick_count -= amount
-            print("Success")
         elif resource == 'sheep':
             self.sheep_robbed += amount
             self.sheep_count -= amount
-            print("Success")
         elif resource == 'wheat':
             self.wheat_robbed += amount
             self.wheat_count -= amount
-            print("Success")
         elif resource == 'rock':
             self.rock_robbed += amount
             self.rock_count -= amount
-            print("Success")
     
+        self.create_numbers()
+        
     def click(self, mouse):
         if 60 + (self.position + 0.5)*self.tab_width - 27 < mouse[0] < 60 + (self.position + 0.5)*self.tab_width + 27:
             return self.name
@@ -210,20 +188,7 @@ class Player:
             #surface.blit(self.resource_texts[i], self.resource_text_rects[i])
             surface.blit(self.robbed_numbers_texts[i], self.robbed_numbers_texts_rects[i])
             
-        '''
-        # Draw add button -------------------------    
-        pygame.draw.circle(surface, (0,150,0), (60 + (self.position + 0.5)*self.tab_width, 600), 54)
-        pygame.draw.circle(surface, (0,250,0), (60 + (self.position + 0.5)*self.tab_width, 600), 50)
-        pygame.draw.rect(surface, (0,0,0), (60 + (self.position + 0.5)*self.tab_width - 15, 597, 30, 6))
-        pygame.draw.rect(surface, (0,0,0), (60 + (self.position + 0.5)*self.tab_width - 3, 585, 6, 30))
-        '''
         
-    def draw_robber(self, surface):
-        pygame.draw.rect(surface, self.COLOUR, (60 + self.position*self.tab_width, 80, self.tab_width, 600))
-        surface.blit(self.name_text, self.name_rect)
-        
-        for i in range(len(self.settlements_texts)):
-            surface.blit(self.settlements_texts[i], self.settlements_texts_rects[i])
 
 
 class Adding_Tab:
