@@ -114,6 +114,10 @@ class Point:
         self.structure = False
         
         self.radius = 4
+        self.settlement_rect = (self.x - self.radius*4, self.y - self.radius*2, self.radius*8, self.radius*4)
+        
+        self.city_rect_1 = (self.x - self.radius*4, self.y, self.radius*8, self.radius*4)
+        self.city_rect_2 = (self.x, self.y - self.radius*4, self.radius*4, self.radius*4)
         
     def clear_hexes(self):
         self.hexes = []
@@ -136,9 +140,10 @@ class Point:
         
     def draw(self, surface):
         if self.structure == 'Settlement':
-            pygame.draw.circle(surface, self.colour, (self.x, self.y), self.radius*3/2)
+            pygame.draw.rect(surface, self.colour, self.settlement_rect)
         elif self.structure == 'City':
-            pygame.draw.circle(surface, self.colour, (self.x, self.y), self.radius*4/2)
+            pygame.draw.rect(surface, self.colour, self.city_rect_1)
+            pygame.draw.rect(surface, self.colour, self.city_rect_2)
         else:
             pygame.draw.circle(surface, self.colour, (self.x, self.y), self.radius)
 
