@@ -226,7 +226,7 @@ class Menu_Buttons:
         self.height = 60
         
         self.mini_font = pygame.font.SysFont('Impact Regular', 60)
-        self.texts = [self.mini_font.render('Short Term', False, (0,0,0)), self.mini_font.render('Map', False, (0,0,0)), self.mini_font.render('Player', False, (0,0,0))]
+        self.texts = [self.mini_font.render('Dice', False, (0,0,0)), self.mini_font.render('Map', False, (0,0,0)), self.mini_font.render('Player', False, (0,0,0))]
 
     def check_button_colour(self, running):
         if running == 'DAS':
