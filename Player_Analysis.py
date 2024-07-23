@@ -15,10 +15,13 @@ class Player:
         self.position = position
         
         if colour in ['Blue', 'blue', 'Bl', 'bl']:
-            self.COLOUR = (133, 180, 255)
-            self.font_colour = (0,0,0)
+            #self.COLOUR = (133, 180, 255)
+            self.COLOUR = (0, 0, 204)
+            #self.font_colour = (0,0,0)
+            self.font_colour = (255,255,255)
         elif colour in ['Orange', 'orange', 'O', 'o']:
-            self.COLOUR = (230,138,0)
+            #self.COLOUR = (230,138,0)
+            self.COLOUR = (252,107,3)
             self.font_colour = (0,0,0)
         elif colour in ['White', 'white', 'W', 'w']:
             self.COLOUR = (255,255,255)
@@ -26,6 +29,12 @@ class Player:
         elif colour in ['Brown', 'brown', 'Br', 'br']:
             self.COLOUR = (117,76,21)
             self.font_colour = (255,255,255)
+        elif colour in ['Red', 'red', 'R', 'r']:
+            self.COLOUR = (222,46,16)
+            self.font_colour = (0,0,0)
+        elif colour in ['Green', 'green', 'G', 'g']:
+            self.COLOUR = (33,130,26)
+            self.font_colour = (0,0,0)
         else:
             self.COLOUR = (255,255,255)
             self.font_colour = (0,0,0)
