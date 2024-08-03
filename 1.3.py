@@ -288,7 +288,7 @@ pirate_assigner = False
 MAP = MG.Map(50, (MAIN_TAB.x + MAIN_TAB.width/2, MAIN_TAB.y + MAIN_TAB.height/2))
 
 # Variable to keep our game loop running 
-running = 'DAS'
+running = 'Map'
   
 # game loop 
 while running: 

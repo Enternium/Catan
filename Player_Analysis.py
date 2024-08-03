@@ -88,15 +88,16 @@ class Player:
         width, height = self.font.size(self.name)
         self.name_rect = (60 + (self.position + 0.5)*self.tab_width - width/2, 80, 0, 0)
         
-        self.resource_texts = [self.tiny_font.render('Wood:', False, self.font_colour), self.tiny_font.render('Brick:', False, self.font_colour), self.tiny_font.render('Sheep:', False, self.font_colour), self.tiny_font.render('Wheat:', False, self.font_colour), self.tiny_font.render('Rock:', False, self.font_colour), self.tiny_font.render('Total:', False, self.font_colour)]
+        self.resource_texts = [self.tiny_font.render('Wo', False, self.font_colour), self.tiny_font.render('Br', False, self.font_colour), self.tiny_font.render('Sh', False, self.font_colour), self.tiny_font.render('Wh', False, self.font_colour), self.tiny_font.render('Ro', False, self.font_colour), self.tiny_font.render('Tot', False, self.font_colour)]
         self.resource_text_rects = [(60 + self.position*self.tab_width, 160), (60 + self.position*self.tab_width, 190), (60 + self.position*self.tab_width, 220), (60 + self.position*self.tab_width, 250), (60 + self.position*self.tab_width, 280), (60 + self.position*self.tab_width, 330)]
         self.resource_text_rects_2 = [(60 + self.position*self.tab_width, 380), (60 + self.position*self.tab_width, 410), (60 + self.position*self.tab_width, 440), (60 + self.position*self.tab_width, 470), (60 + self.position*self.tab_width, 500), (60 + self.position*self.tab_width, 550)]
       
         self.create_numbers()
         shift = 150
-        self.resource_numbers_texts_rects = [(60 + self.position*self.tab_width + shift, 160), (60 + self.position*self.tab_width + shift, 190), (60 + self.position*self.tab_width + shift, 220), (60 + self.position*self.tab_width + shift, 250), (60 + self.position*self.tab_width + shift, 280), (60 + self.position*self.tab_width + shift, 330)]
-        self.robbed_numbers_texts_rects = [(60 + self.position*self.tab_width + shift, 380), (60 + self.position*self.tab_width + shift, 410), (60 + self.position*self.tab_width + shift, 440), (60 + self.position*self.tab_width + shift, 470), (60 + self.position*self.tab_width + shift, 500), (60 + self.position*self.tab_width + shift, 550)]
-
+        self.resource_numbers_texts_rects = [(self.position*self.tab_width + shift, 160), (self.position*self.tab_width + shift, 190), (self.position*self.tab_width + shift, 220), (self.position*self.tab_width + shift, 250), (self.position*self.tab_width + shift, 280), (self.position*self.tab_width + shift, 330)]
+        self.robbed_numbers_texts_rects = [(self.position*self.tab_width + shift, 380), (self.position*self.tab_width + shift, 410), (self.position*self.tab_width + shift, 440), (self.position*self.tab_width + shift, 470), (self.position*self.tab_width + shift, 500), (self.position*self.tab_width + shift, 550)]
+        shift = 200
+        self.expected_numbers_texts_rects = [(self.position*self.tab_width + shift, 160), (self.position*self.tab_width + shift, 190), (self.position*self.tab_width + shift, 220), (self.position*self.tab_width + shift, 250), (self.position*self.tab_width + shift, 280), (self.position*self.tab_width + shift, 330)]
         
     def create_numbers(self):
         
@@ -105,7 +106,10 @@ class Player:
         
         total = self.wood_robbed + self.brick_robbed + self.sheep_robbed + self.wheat_robbed + self.rock_robbed
         self.robbed_numbers_texts = [self.tiny_font.render(str(self.wood_robbed), False, self.font_colour), self.tiny_font.render(str(self.brick_robbed), False, self.font_colour), self.tiny_font.render(str(self.sheep_robbed), False, self.font_colour), self.tiny_font.render(str(self.wheat_robbed), False, self.font_colour), self.tiny_font.render(str(self.rock_robbed), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
-    
+        
+        total = self.wood_exp + self.brick_exp + self.sheep_exp + self.wheat_exp + self.rock_exp
+        self.expected_numbers_texts = [self.tiny_font.render(str(np.round(self.wood_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.brick_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.sheep_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.wheat_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.rock_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(total, decimals = 1)), False, self.font_colour)]
+        
     def turn(self, dice_total):
         
 
@@ -193,6 +197,9 @@ class Player:
         for i in range(len(self.resource_texts)):
             surface.blit(self.resource_texts[i], self.resource_text_rects[i])
             surface.blit(self.resource_numbers_texts[i], self.resource_numbers_texts_rects[i])
+            surface.blit(self.expected_numbers_texts[i], self.expected_numbers_texts_rects[i])
+            
+        pygame.draw.rect(surface, self.font_colour, (self.position*self.tab_width + 192, 160, 2, 210))
             
         for i in range(len(self.robbed_numbers_texts)):
             surface.blit(self.resource_texts[i], self.resource_text_rects_2[i])
