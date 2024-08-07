@@ -279,11 +279,13 @@ MAIN_TAB = Tab(CONSTANTS)
 
 MAP_BUTTONS = PA.gen_Player_Map_Button_list(CONSTANTS['Players'], CONSTANTS, MAIN_TAB)
 ROBBER_BUTTONS = PA.Robber_Map_Button(CONSTANTS, MAIN_TAB)
+CLEAR_BUTTON = PA.Clear_Button(CONSTANTS, MAIN_TAB)
 
 structure_assigner = False
 player_assigner = False
 robber_assigner = False
 pirate_assigner = False
+clear_assigner = False
 
 MAP = MG.Map(50, (MAIN_TAB.x + MAIN_TAB.width/2, MAIN_TAB.y + MAIN_TAB.height/2))
 
@@ -308,6 +310,7 @@ while running:
         for button in MAP_BUTTONS:
             button.draw(surface, player_assigner, structure_assigner)
         ROBBER_BUTTONS.draw(surface, robber_assigner, pirate_assigner)
+        CLEAR_BUTTON.draw(surface, clear_assigner)
     
     for event in pygame.event.get(): 
       
@@ -352,18 +355,48 @@ while running:
                                 if structure_type == structure_assigner:
                                     structure_assigner = False
                                     player_assigner = False
+                                    robber_assigner = False
+                                    pirate_assigner = False
+                                    clear_assigner = False
                                     
                             # else assign values
                             else:
                                 structure_assigner = structure_type
                                 player_assigner = temp_player
+                                robber_assigner = False
+                                pirate_assigner = False
+                                clear_assigner = False
                                 break
                 
                 elif ROBBER_BUTTONS.click(mouse):
                     if robber_assigner:
+                        structure_assigner = False
+                        player_assigner = False
                         robber_assigner = False
+                        pirate_assigner = False
+                        clear_assigner = False
                     else:
+                        structure_assigner = False
+                        player_assigner = False
                         robber_assigner = True
+                        pirate_assigner = False
+                        clear_assigner = False
+                        
+                        
+                elif CLEAR_BUTTON.click(mouse):
+                    if clear_assigner:
+                        structure_assigner = False
+                        player_assigner = False
+                        robber_assigner = False
+                        pirate_assigner = False
+                        clear_assigner = False
+                    else:
+                        structure_assigner = False
+                        player_assigner = False
+                        robber_assigner = False
+                        pirate_assigner = False
+                        clear_assigner = True      
+                
                         
                 elif robber_assigner:
                     for hexagon in MAP.HEXES:
@@ -374,7 +407,7 @@ while running:
                             robber_assigner = False
                             break
                 
-                elif structure_assigner:
+                elif structure_assigner == 'Settlement':
                     for point in MAP.pure_points_list:
                         hexes = point.click(mouse, player_assigner, structure_assigner)
                         if hexes:
@@ -386,6 +419,37 @@ while running:
                             structure_assigner = False
                             player_assigner = False
                             break
+                        
+                elif structure_assigner == 'City':
+                    for point in MAP.pure_points_list:
+                        hexes = point.click(mouse, player_assigner, structure_assigner)
+                        if hexes:
+                            for player in CONSTANTS['Players']:
+                                if player == player_assigner:
+                                    for hexagon in hexes:
+                                        player.add_resource(hexagon.resource, hexagon.number)
+                                    break
+                            structure_assigner = False
+                            player_assigner = False
+                            break
+                        
+                elif clear_assigner:
+                    for point in MAP.pure_points_list:
+                        hexes, old_player, old_structure = point.click(mouse, False, False)
+                        if hexes:
+                            for player in CONSTANTS['Players']:
+                                if player == old_player:
+                                    for hexagon in hexes:
+                                        player.remove_resource(hexagon.resource, hexagon.number)
+                                    break
+                            if old_structure == 'City':
+                                for player in CONSTANTS['Players']:
+                                    if player == old_player:
+                                        for hexagon in hexes:
+                                            player.remove_resource(hexagon.resource, hexagon.number)
+                                        break
+                                    
+                            clear_assigner = False
 
                 
                 

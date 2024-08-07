@@ -144,10 +144,33 @@ class Point:
         self.structure = structure
         
     def click(self, mouse, player, structure):
-        if self.x - self.radius*3 < mouse[0] < self.x + self.radius*3:
-            if self.y - self.radius*3 < mouse[1] < self.y + self.radius*3:
-                self.assign_player(player, structure)
-                return self.hexes
+        
+        if structure == 'Settlement':
+            if self.structure == False:
+                if self.x - self.radius*3 < mouse[0] < self.x + self.radius*3:
+                    if self.y - self.radius*3 < mouse[1] < self.y + self.radius*3:
+                        self.assign_player(player, structure)
+                        return self.hexes
+                    
+        elif structure == 'City':
+            if self.structure == 'Settlement':
+                if self.player == player:
+                    if self.x - self.radius*3 < mouse[0] < self.x + self.radius*3:
+                        if self.y - self.radius*3 < mouse[1] < self.y + self.radius*3:
+                            self.assign_player(player, structure)
+                            return self.hexes
+                
+        else:
+            if self.x - self.radius*3 < mouse[0] < self.x + self.radius*3:
+                if self.y - self.radius*3 < mouse[1] < self.y + self.radius*3:
+                    old_player = self.player
+                    old_structure = self.structure
+                    self.player = False
+                    self.colour = (0,0,0)
+                    self.structure = False
+                    return self.hexes, old_player, old_structure
+            
+            return False, False, False
             
         return False
         

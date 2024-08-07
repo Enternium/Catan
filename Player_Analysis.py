@@ -164,6 +164,23 @@ class Player:
         elif resource == 'rock':
             self.rock_nums.append(number)
                     
+    def remove_resource(self, resource, number):
+        
+        if resource == 'wood':
+            self.wood_nums.remove(number)
+            
+        elif resource == 'brick':
+            self.brick_nums.remove(number)
+            
+        elif resource == 'sheep':
+            self.sheep_nums.remove(number)
+            
+        elif resource == 'wheat':
+            self.wheat_nums.remove(number)
+            
+        elif resource == 'rock':
+            self.rock_nums.remove(number)
+        
     def robbed(self, resource, amount):
         
         if resource == 'wood':
@@ -282,6 +299,52 @@ def gen_Player_Map_Button_list(player_list, CONSTANTS, MAIN_TAB):
         temp.append(Player_Map_Button(player_list[i], CONSTANTS, MAIN_TAB, i))
     return temp
 
+class Clear_Button:
+    def __init__(self, CONSTANTS, MAIN_TAB):
+        self.con = CONSTANTS
+        self.MT = MAIN_TAB
+        
+        self.colour = (250,250,250)
+        self.font_colour = (20,20,20)
+        self.height = self.MT.height/6
+        self.width = self.MT.width*11/48
+        self.x = self.MT.x
+        self.y = self.MT.y + self.height
+        
+        self.mini_font = pygame.font.SysFont('Impact Regular', 60)
+        self.baby_font = pygame.font.SysFont('Impact Regular', 26)
+        
+        self.name_text = self.mini_font.render('Clear', False, self.font_colour)
+        self.name_text_rect = self.name_text.get_rect(center = (self.x + self.width/2, self.y + self.height/4))
+        
+        self.button_texts = [self.baby_font.render('Clear', False, self.font_colour)]
+        self.button_texts_rects = [self.button_texts[0].get_rect(center = (self.x + self.width/2, self.y + self.height*3/4))]
+        
+    def click(self, mouse):
+        if self.y + self.height/2 < mouse[1] < self.y + self.height:
+            if self.x < mouse[0] < self.x + self.width:
+                return True
+        else:
+            return False
+    
+    def draw(self, surface, clear_assigner):
+        
+        pygame.draw.rect(surface, self.colour, (self.x, self.y, self.width, self.height))
+        
+        pygame.draw.rect(surface, (0,0,0), (self.x, self.y, self.width, self.height), width = 2)
+        
+        if clear_assigner:
+            pygame.draw.rect(surface, (0,0,0), (self.x, self.y + self.height/2, self.width, self.height/2), width = 6)
+        else:
+            pygame.draw.rect(surface, (0,0,0), (self.x, self.y + self.height/2, self.width, self.height/2), width = 2)
+          
+            
+        surface.blit(self.name_text, self.name_text_rect)
+        
+        for i in range(len(self.button_texts)):
+            surface.blit(self.button_texts[i], self.button_texts_rects[i])
+            
+            
 class Robber_Map_Button:
     def __init__(self, CONSTANTS, MAIN_TAB):
         self.con = CONSTANTS
