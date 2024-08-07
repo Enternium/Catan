@@ -15,12 +15,9 @@ class Player:
         self.position = position
         
         if colour in ['Blue', 'blue', 'Bl', 'bl']:
-            #self.COLOUR = (133, 180, 255)
             self.COLOUR = (0, 0, 204)
-            #self.font_colour = (0,0,0)
             self.font_colour = (255,255,255)
         elif colour in ['Orange', 'orange', 'O', 'o']:
-            #self.COLOUR = (230,138,0)
             self.COLOUR = (252,107,3)
             self.font_colour = (0,0,0)
         elif colour in ['White', 'white', 'W', 'w']:
@@ -63,19 +60,9 @@ class Player:
         self.wheat_robbed = 0
         self.rock_robbed = 0
         
-        self.exp_multipliers = np.zeros(11)
-        
-        self.exp_multipliers[0] = 0.027777777777777800
-        self.exp_multipliers[1] = 0.055555555555555600
-        self.exp_multipliers[2] = 0.083333333333333300
-        self.exp_multipliers[3] = 0.111111111111111000
-        self.exp_multipliers[4] = 0.138888888888889000
-        self.exp_multipliers[5] = 0.166666666666667000
-        self.exp_multipliers[6] = 0.138888888888889000
-        self.exp_multipliers[7] = 0.111111111111111000
-        self.exp_multipliers[8] = 0.083333333333333300
-        self.exp_multipliers[9] = 0.055555555555555600
-        self.exp_multipliers[10] = 0.027777777777777800
+        self.exp_multipliers = []
+        for num in [1,2,3,4,5,6,5,4,3,2,1]:
+            self.exp_multipliers.append(num/36)
         
         self.tab_width = 224
         

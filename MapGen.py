@@ -8,7 +8,7 @@ Created on Sun Jul 21 12:11:35 2024
 import pygame
 import math
 import random
-
+import numpy as np
 
 
 
@@ -259,7 +259,12 @@ class Map:
                     
         self.points_rows, self.pure_points_list = point_generator(self.edge_length, self.center)
         
+        self.exp_multipliers = []
+        for num in [1,2,3,4,5,6,5,4,3,2,1]:
+            self.exp_multipliers.append(num/36)
+        
         self.gen_map()
+        self.map_analysis()
         
     def gen_map(self):
         self.HEXES = map_maker(self.edge_length, self.pure_points_list, self.points_rows)
@@ -269,6 +274,35 @@ class Map:
         
         self.allocate_hexes_to_points()
         
+    def map_analysis(self):
+        
+        wood_probs = 0
+        brick_probs = 0
+        sheep_probs = 0
+        wheat_probs = 0
+        rock_probs = 0
+        
+        for hexagon in self.HEXES:
+            if hexagon.number:
+                multiplier = self.exp_multipliers[hexagon.number - 2]
+                if hexagon.resource == 'wood':
+                    wood_probs += multiplier
+                elif hexagon.resource == 'brick':
+                    brick_probs += multiplier
+                elif hexagon.resource == 'sheep':
+                    sheep_probs += multiplier
+                elif hexagon.resource == 'wheat':
+                    wheat_probs += multiplier
+                elif hexagon.resource == 'rock':
+                    rock_probs += multiplier
+                    
+        print(wood_probs)
+        print(brick_probs)
+        print(sheep_probs)
+        print(wheat_probs)
+        print(rock_probs)
+            
+    
     def allocate_hexes_to_points(self):
         for point in self.pure_points_list:
             for hexagon in self.HEXES:
