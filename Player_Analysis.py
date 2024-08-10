@@ -73,18 +73,18 @@ class Player:
         
         self.name_text = self.font.render(self.name, False, self.font_colour)
         width, height = self.font.size(self.name)
-        self.name_rect = (60 + (self.position + 0.5)*self.tab_width - width/2, 80, 0, 0)
+        self.name_rect = (60 + (self.position + 0.5)*self.tab_width - width/2, 90, 0, 0)
         
         self.resource_texts = [self.tiny_font.render('Wo', False, self.font_colour), self.tiny_font.render('Br', False, self.font_colour), self.tiny_font.render('Sh', False, self.font_colour), self.tiny_font.render('Wh', False, self.font_colour), self.tiny_font.render('Ro', False, self.font_colour), self.tiny_font.render('Tot', False, self.font_colour)]
-        self.resource_text_rects = [(60 + self.position*self.tab_width, 160), (60 + self.position*self.tab_width, 190), (60 + self.position*self.tab_width, 220), (60 + self.position*self.tab_width, 250), (60 + self.position*self.tab_width, 280), (60 + self.position*self.tab_width, 330)]
-        self.resource_text_rects_2 = [(60 + self.position*self.tab_width, 380), (60 + self.position*self.tab_width, 410), (60 + self.position*self.tab_width, 440), (60 + self.position*self.tab_width, 470), (60 + self.position*self.tab_width, 500), (60 + self.position*self.tab_width, 550)]
+        self.resource_text_rects = [(60 + self.position*self.tab_width, 170), (60 + self.position*self.tab_width, 200), (60 + self.position*self.tab_width, 230), (60 + self.position*self.tab_width, 260), (60 + self.position*self.tab_width, 290), (60 + self.position*self.tab_width, 340)]
+        self.resource_text_rects_2 = [(60 + self.position*self.tab_width, 390), (60 + self.position*self.tab_width, 420), (60 + self.position*self.tab_width, 450), (60 + self.position*self.tab_width, 480), (60 + self.position*self.tab_width, 510), (60 + self.position*self.tab_width, 560)]
       
         self.create_numbers()
         shift = 150
-        self.resource_numbers_texts_rects = [(self.position*self.tab_width + shift, 160), (self.position*self.tab_width + shift, 190), (self.position*self.tab_width + shift, 220), (self.position*self.tab_width + shift, 250), (self.position*self.tab_width + shift, 280), (self.position*self.tab_width + shift, 330)]
-        self.robbed_numbers_texts_rects = [(self.position*self.tab_width + shift, 380), (self.position*self.tab_width + shift, 410), (self.position*self.tab_width + shift, 440), (self.position*self.tab_width + shift, 470), (self.position*self.tab_width + shift, 500), (self.position*self.tab_width + shift, 550)]
+        self.resource_numbers_texts_rects = [(self.position*self.tab_width + shift, 170), (self.position*self.tab_width + shift, 200), (self.position*self.tab_width + shift, 230), (self.position*self.tab_width + shift, 260), (self.position*self.tab_width + shift, 290), (self.position*self.tab_width + shift, 340)]
+        self.robbed_numbers_texts_rects = [(self.position*self.tab_width + shift, 390), (self.position*self.tab_width + shift, 420), (self.position*self.tab_width + shift, 450), (self.position*self.tab_width + shift, 480), (self.position*self.tab_width + shift, 510), (self.position*self.tab_width + shift, 560)]
         shift = 200
-        self.expected_numbers_texts_rects = [(self.position*self.tab_width + shift, 160), (self.position*self.tab_width + shift, 190), (self.position*self.tab_width + shift, 220), (self.position*self.tab_width + shift, 250), (self.position*self.tab_width + shift, 280), (self.position*self.tab_width + shift, 330)]
+        self.expected_numbers_texts_rects = [(self.position*self.tab_width + shift, 170), (self.position*self.tab_width + shift, 200), (self.position*self.tab_width + shift, 230), (self.position*self.tab_width + shift, 260), (self.position*self.tab_width + shift, 290), (self.position*self.tab_width + shift, 340)]
         
     def create_numbers(self):
         
@@ -195,7 +195,7 @@ class Player:
             return False
             
     def draw_tab(self, surface):
-        pygame.draw.rect(surface, self.COLOUR, (60 + self.position*self.tab_width, 80, self.tab_width, 600))
+        pygame.draw.rect(surface, self.COLOUR, (60 + self.position*self.tab_width, 90, self.tab_width, 700))
         surface.blit(self.name_text, self.name_rect)
         
         for i in range(len(self.resource_texts)):
@@ -212,8 +212,12 @@ class Player:
         
 
         
-def get_player_info():           
-    num_players = input('How many players?')
+def get_player_info(Default = False):  
+    
+    if Default:
+        num_players = 'Default'
+    else:         
+        num_players = input('How many players?')
     
     if num_players == 'Default':
         players = [Player('Jack', 'Blue', 0), Player('Alex', 'Brown', 1), Player('Annie', 'Orange', 2), Player('Mark', 'White', 3)]

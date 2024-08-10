@@ -127,10 +127,13 @@ class Point:
         self.structure = False
         
         self.radius = 4
-        self.settlement_rect = (self.x - self.radius*4, self.y - self.radius*2, self.radius*8, self.radius*4)
+        #self.settlement_rect = (self.x - self.radius*4, self.y - self.radius*2, self.radius*8, self.radius*4)
+        self.settlement_rect = (self.x - self.radius*6, self.y - self.radius*3, self.radius*12, self.radius*6)
         
-        self.city_rect_1 = (self.x - self.radius*4, self.y, self.radius*8, self.radius*4)
-        self.city_rect_2 = (self.x, self.y - self.radius*4, self.radius*4, self.radius*4)
+        #self.city_rect_1 = (self.x - self.radius*4, self.y, self.radius*8, self.radius*4)
+        #self.city_rect_2 = (self.x, self.y - self.radius*4, self.radius*4, self.radius*4)
+        self.city_rect_1 = (self.x - self.radius*6, self.y, self.radius*12, self.radius*6)
+        self.city_rect_2 = (self.x, self.y - self.radius*6, self.radius*6, self.radius*6)
         
     def clear_hexes(self):
         self.hexes = []
