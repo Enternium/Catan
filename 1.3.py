@@ -61,7 +61,7 @@ class Buttons:
         for i in range(2,13):
             self.nums.append(self.font.render(str(i), False, (0,0,0)))
             self.nums_rects.append(self.nums[-1].get_rect(center=(self.x + (self.ind_width+2)*(i-2) + self.ind_width/2, self.con['Height']*0.75 + self.height*3/8)))
-            self.nums_rects_bars.append(self.nums[-1].get_rect(center=(self.x + (self.ind_width+2)*(i-2) + self.ind_width/2, self.con['Height']/2 + 150)))
+            self.nums_rects_bars.append(self.nums[-1].get_rect(center=(self.x + (self.ind_width+2)*(i-2) + self.ind_width/2, self.con['Height']/2 + 200)))
             
         self.percentages = []
         self.percentages_texts = []
@@ -91,7 +91,7 @@ class Buttons:
             if max_val == 0:
                 self.chunk = 0
             else:
-                self.chunk = 450/max_val
+                self.chunk = 550/max_val
         
         return number
         
@@ -277,6 +277,7 @@ CONSTANTS['Players'] = players
 BUTTONS = Buttons(CONSTANTS)
 MENU = Menu_Buttons(CONSTANTS)
 MAIN_TAB = Tab(CONSTANTS)
+TOTALS = PA.Total_Tab()
 
 MAP_BUTTONS = PA.gen_Player_Map_Button_list(CONSTANTS['Players'], CONSTANTS, MAIN_TAB)
 ROBBER_BUTTONS = PA.Robber_Map_Button(CONSTANTS, MAIN_TAB)
@@ -305,6 +306,7 @@ while running:
     if running == 'PAS':
         for player in CONSTANTS['Players']:
             player.draw_tab(surface)
+        TOTALS.draw_tab(surface)
                                 
     elif running == 'Map':
         MAP.draw(surface)
@@ -345,6 +347,7 @@ while running:
                         for player in CONSTANTS['Players']:
                             player.turn(number)
                         CONSTANTS['Players'] = MAP.calc_robbery(CONSTANTS['Players'], number)
+                        TOTALS.update(CONSTANTS['Players'])
                     
                         
                 elif running == 'Map':
