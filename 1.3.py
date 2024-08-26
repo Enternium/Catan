@@ -9,6 +9,7 @@ import pygame
 import numpy as np
 import Player_Analysis as PA
 import MapGen as MG
+from Player_Selection import Run_Player_Selection
 
 
 # GitHub Test
@@ -262,7 +263,8 @@ class Menu_Buttons:
 pygame.init()
 pygame.font.init()
 
-players = PA.get_player_info(Default = True)
+#players = PA.get_player_info(Default = True)
+players = Run_Player_Selection()
 
 #surface = pygame.display.set_mode((0,0), pygame.FULLSCREEN) 
 surface = pygame.display.set_mode((1920,1080)) 
@@ -274,6 +276,7 @@ CONSTANTS = {}
 CONSTANTS['Width'], CONSTANTS['Height'] = pygame.display.get_surface().get_size()
 CONSTANTS['Players'] = players
 
+pygame.font.init()
 BUTTONS = Buttons(CONSTANTS)
 MENU = Menu_Buttons(CONSTANTS)
 MAIN_TAB = Tab(CONSTANTS)

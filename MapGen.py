@@ -146,7 +146,7 @@ class Point:
         self.colour = player.COLOUR
         self.structure = structure
         
-    def click(self, mouse, player, structure):
+    def click(self, mouse, player, structure: str):
         
         if structure == 'Settlement':
             if self.structure == False:
