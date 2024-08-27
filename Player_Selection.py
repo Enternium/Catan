@@ -9,10 +9,11 @@ from Player_Analysis import Player
 
 
 class Player_Button:
-    def __init__(self, name, colour, position):
+    def __init__(self, name, colour, position, ticked):
         self.name = name
         self.position = position
         self.colour_text = colour
+        self.ticked = ticked
         
         if colour in ['Blue', 'blue', 'Bl', 'bl']:
             self.colour = (0, 0, 204)
@@ -58,7 +59,6 @@ class Player_Button:
         
         self.tick_coordinates = [self.x + self.width/2, self.y + self.height*4/5 + self.tickbox_height/2]
         
-        self.ticked = False
         
     def click(self, mouse):
         
@@ -110,12 +110,12 @@ def Run_Player_Selection():
     pygame.init()
     pygame.font.init()
         
-    player_buttons = [Player_Button('Jack', 'Blue', 0),
-                      Player_Button('Alex', 'Brown', 1),
-                      Player_Button('Annie', 'Orange', 2),
-                      Player_Button('Mark', 'White', 3),
-                      Player_Button('Steven', 'Green', 4),
-                      Player_Button('Hillary', 'Red', 5)]
+    player_buttons = [Player_Button('Jack', 'Blue', 0, True),
+                      Player_Button('Alex', 'Brown', 1, True),
+                      Player_Button('Annie', 'Orange', 2, True),
+                      Player_Button('Mark', 'White', 3, True),
+                      Player_Button('Steven', 'Green', 4, False),
+                      Player_Button('Hillary', 'Red', 5, False)]
     
     go_button = Go_Button()
     
@@ -151,17 +151,22 @@ def Run_Player_Selection():
         pygame.display.flip() 
 
     
+    count = 0
+    for button in player_buttons:
+        if button.ticked:
+            count += 1
+
+    if count <= 4:
+        game_mode = 4
+    else:
+        game_mode = 6
+
     player_list = []
     for button in player_buttons:
         if button.ticked:
-            player_list.append(Player(button.name, button.colour_text, len(player_list)))
+            player_list.append(Player(button.name, button.colour_text, len(player_list), mode = game_mode))
             
     pygame.display.quit()
-    print()
-    print(player_list)
-    print()
     
-    for player in player_list:
-        print(player.name)
     return player_list
 

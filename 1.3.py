@@ -19,8 +19,6 @@ class Tab:
         self.width = CONSTANTS['Width']*0.95 - 24
         self.height = 700
         self.x = 60
-        #self.y = CONSTANTS['Height']/2 - self.height/2 - 100
-        #self.y = CONSTANTS['Height']/2 - self.height/2 - 150
         self.y = 90
         
     def draw(self, surface):
@@ -38,11 +36,10 @@ class Buttons:
         
         self.ind_width = self.tot_width/11
         
-        self.col = (120,230,100)
         self.col = (100,100,130)
         
-        self.font = pygame.font.SysFont('Impact Regular', 100)
-        self.mini_font = pygame.font.SysFont('Impact Regular', 60)
+        self.font = pygame.font.SysFont('Impact Regular', 120)
+        self.mini_font = pygame.font.SysFont('Impact Regular', 75)
         self.tiny_font = pygame.font.SysFont('Impact Regular', 40)
         
         self.count = [0,0,0,0,0,0,0,0,0,0,0]
@@ -61,7 +58,7 @@ class Buttons:
         
         for i in range(2,13):
             self.nums.append(self.font.render(str(i), False, (0,0,0)))
-            self.nums_rects.append(self.nums[-1].get_rect(center=(self.x + (self.ind_width+2)*(i-2) + self.ind_width/2, self.con['Height']*0.75 + self.height*3/8)))
+            self.nums_rects.append(self.nums[-1].get_rect(center=(self.x + (self.ind_width+2)*(i-2) + self.ind_width/2, self.con['Height']*0.75 + self.height*5/16)))
             self.nums_rects_bars.append(self.nums[-1].get_rect(center=(self.x + (self.ind_width+2)*(i-2) + self.ind_width/2, self.con['Height']/2 + 200)))
             
         self.percentages = []
@@ -276,11 +273,14 @@ CONSTANTS = {}
 CONSTANTS['Width'], CONSTANTS['Height'] = pygame.display.get_surface().get_size()
 CONSTANTS['Players'] = players
 
+if len(CONSTANTS['Players']) > 0:
+    mode = CONSTANTS['Players'][0].mode
+
 pygame.font.init()
 BUTTONS = Buttons(CONSTANTS)
 MENU = Menu_Buttons(CONSTANTS)
 MAIN_TAB = Tab(CONSTANTS)
-TOTALS = PA.Total_Tab()
+TOTALS = PA.Total_Tab(mode)
 
 MAP_BUTTONS = PA.gen_Player_Map_Button_list(CONSTANTS['Players'], CONSTANTS, MAIN_TAB)
 ROBBER_BUTTONS = PA.Robber_Map_Button(CONSTANTS, MAIN_TAB)
@@ -292,7 +292,9 @@ robber_assigner = False
 pirate_assigner = False
 clear_assigner = False
 
-MAP = MG.Map(62, (MAIN_TAB.x + MAIN_TAB.width/2, MAIN_TAB.y + MAIN_TAB.height/2))
+
+        
+MAP = MG.Map(62, (MAIN_TAB.x + MAIN_TAB.width/2, MAIN_TAB.y + MAIN_TAB.height/2), mode)
 
 # Variable to keep our game loop running 
 running = 'Map'

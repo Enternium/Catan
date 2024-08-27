@@ -10,9 +10,10 @@ import pygame
 
 
 class Player:
-    def __init__(self, name, colour, position):
+    def __init__(self, name, colour, position, mode):
         self.name = name
         self.position = position
+        self.mode = mode
         
         if colour in ['Blue', 'blue', 'Bl', 'bl']:
             self.COLOUR = (0, 0, 204)
@@ -41,24 +42,28 @@ class Player:
         self.sheep_nums = []
         self.wheat_nums = []
         self.rock_nums = []
+        self.gold_nums = []
         
         self.wood_count = 0
         self.brick_count = 0
         self.sheep_count = 0
         self.wheat_count = 0
         self.rock_count = 0
+        self.gold_count = 0
         
         self.wood_exp = 0
         self.brick_exp = 0
         self.sheep_exp = 0
         self.wheat_exp = 0
         self.rock_exp = 0
+        self.gold_exp = 0
         
         self.wood_robbed = 0
         self.brick_robbed = 0
         self.sheep_robbed = 0
         self.wheat_robbed = 0
         self.rock_robbed = 0
+        self.gold_robbed = 0
         
         self.exp_multipliers = []
         for num in [1,2,3,4,5,6,5,4,3,2,1]:
@@ -83,7 +88,9 @@ class Player:
         for text in ['Collected', 'Robbed']:
             self.subtitles_texts.append(self.mini_font.render(text, False, self.font_colour))
             
-        self.subtitles_rects = [self.subtitles_texts[0].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200)), self.subtitles_texts[1].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200 + 270))]
+        self.robbed_shift = 300
+            
+        self.subtitles_rects = [self.subtitles_texts[0].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200)), self.subtitles_texts[1].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200 + self.robbed_shift))]
         
             
         self.create_numbers()
@@ -96,24 +103,35 @@ class Player:
         self.resource_numbers_texts_rects = []
         self.robbed_numbers_texts_rects = []
         self.expected_numbers_texts_rects = []
-        for y in [220, 250, 280, 310, 340, 390]:
+        for y in [220, 250, 280, 310, 340, 420]: # 370
             self.resource_text_rects.append((60 + self.position*self.tab_width, y))
-            self.resource_text_rects_2.append((60 + self.position*self.tab_width, y + 270))
+            self.resource_text_rects_2.append((60 + self.position*self.tab_width, y + self.robbed_shift))
             self.resource_numbers_texts_rects.append((self.position*self.tab_width + shift, y))
-            self.robbed_numbers_texts_rects.append((self.position*self.tab_width + shift, y + 270))
+            self.robbed_numbers_texts_rects.append((self.position*self.tab_width + shift, y + self.robbed_shift))
             self.expected_numbers_texts_rects.append((self.position*self.tab_width + shift_e, y))
+            
+        if self.mode == 6:
+            self.gold_text = self.tiny_font.render('Gold', False, self.font_colour)
+            self.gold_text_rects = [(60 + self.position*self.tab_width, 370), (60 + self.position*self.tab_width, 370 + self.robbed_shift)]
+            self.gold_numbers_texts_rects = [(self.position*self.tab_width + shift, 370), (self.position*self.tab_width + shift, 370 + self.robbed_shift), (self.position*self.tab_width + shift_e, 370)]
 
 
     def create_numbers(self):
         
-        total = self.wood_count + self.brick_count + self.sheep_count + self.wheat_count + self.rock_count
+        total = self.wood_count + self.brick_count + self.sheep_count + self.wheat_count + self.rock_count + self.gold_count
         self.resource_numbers_texts = [self.tiny_font.render(str(self.wood_count), False, self.font_colour), self.tiny_font.render(str(self.brick_count), False, self.font_colour), self.tiny_font.render(str(self.sheep_count), False, self.font_colour), self.tiny_font.render(str(self.wheat_count), False, self.font_colour), self.tiny_font.render(str(self.rock_count), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
         
-        total = self.wood_robbed + self.brick_robbed + self.sheep_robbed + self.wheat_robbed + self.rock_robbed
+        total = self.wood_robbed + self.brick_robbed + self.sheep_robbed + self.wheat_robbed + self.rock_robbed + self.gold_robbed
         self.robbed_numbers_texts = [self.tiny_font.render(str(self.wood_robbed), False, self.font_colour), self.tiny_font.render(str(self.brick_robbed), False, self.font_colour), self.tiny_font.render(str(self.sheep_robbed), False, self.font_colour), self.tiny_font.render(str(self.wheat_robbed), False, self.font_colour), self.tiny_font.render(str(self.rock_robbed), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
         
-        total = self.wood_exp + self.brick_exp + self.sheep_exp + self.wheat_exp + self.rock_exp
+        total = self.wood_exp + self.brick_exp + self.sheep_exp + self.wheat_exp + self.rock_exp + self.gold_exp
         self.expected_numbers_texts = [self.tiny_font.render(str(np.round(self.wood_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.brick_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.sheep_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.wheat_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.rock_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(total, decimals = 1)), False, self.font_colour)]
+        
+        if self.mode == 6:
+            self.gold_numbers_texts = [self.tiny_font.render(str(self.gold_count), False, self.font_colour),
+                                       self.tiny_font.render(str(self.gold_robbed), False, self.font_colour),
+                                       self.tiny_font.render(str(np.round(self.gold_exp, decimals = 1)), False, self.font_colour)]
+                                      
         
     def turn(self, dice_total):
         
@@ -128,6 +146,8 @@ class Player:
             self.wheat_exp += self.exp_multipliers[j-2]
         for j in self.rock_nums:
             self.rock_exp += self.exp_multipliers[j-2]
+        for j in self.gold_nums:
+            self.gold_exp += self.exp_multipliers[j-2]
         
         
         for i in range(len(self.wood_nums)):
@@ -150,6 +170,10 @@ class Player:
             if self.rock_nums[i] == dice_total:
                 self.rock_count += 1
                 
+        for i in range(len(self.gold_nums)):
+            if self.gold_nums[i] == dice_total:
+                self.gold_count += 1
+                
         self.create_numbers()
                 
     def add_resource(self, resource, number):
@@ -168,6 +192,9 @@ class Player:
             
         elif resource == 'rock':
             self.rock_nums.append(number)
+            
+        elif resource == 'gold':
+            self.gold_nums.append(number)
                     
     def remove_resource(self, resource, number):
         
@@ -185,6 +212,9 @@ class Player:
             
         elif resource == 'rock':
             self.rock_nums.remove(number)
+            
+        elif resource == 'gold':
+            self.gold_nums.remove(number)
         
     def robbed(self, resource, amount):
         
@@ -203,6 +233,9 @@ class Player:
         elif resource == 'rock':
             self.rock_robbed += amount
             self.rock_count -= amount
+        elif resource == 'gold':
+            self.gold_robbed += amount
+            self.gold_count -= amount
     
         self.create_numbers()
         
@@ -230,9 +263,19 @@ class Player:
         for i in range(len(self.subtitles_rects)):
             surface.blit(self.subtitles_texts[i], self.subtitles_rects[i])
             
+        if self.mode == 6:
+            for i in range(len(self.gold_text_rects)):
+                surface.blit(self.gold_text, self.gold_text_rects[i])
+                
+            for i in range(len(self.gold_numbers_texts)):
+                surface.blit(self.gold_numbers_texts[i], self.gold_numbers_texts_rects[i])
+            
         
 class Total_Tab:
-    def __init__(self):
+    def __init__(self, mode):
+        
+        self.mode = mode
+        
         self.name = 'TOTAL'
         self.position = 6
         
@@ -260,7 +303,9 @@ class Total_Tab:
         for text in ['Collected', 'Robbed']:
             self.subtitles_texts.append(self.mini_font.render(text, False, self.font_colour))
             
-        self.subtitles_rects = [self.subtitles_texts[0].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200)), self.subtitles_texts[1].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200 + 270))]
+        self.robbed_shift = 300
+            
+        self.subtitles_rects = [self.subtitles_texts[0].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200)), self.subtitles_texts[1].get_rect(center = ((self.position + 0.5)*self.tab_width + 60, 200 + self.robbed_shift))]
         
         self.create_numbers()
                         
@@ -272,23 +317,34 @@ class Total_Tab:
         self.resource_numbers_texts_rects = []
         self.robbed_numbers_texts_rects = []
         self.expected_numbers_texts_rects = []
-        for y in [220, 250, 280, 310, 340, 390]:
+        for y in [220, 250, 280, 310, 340, 420]:
             self.resource_text_rects.append((60 + self.position*self.tab_width, y))
-            self.resource_text_rects_2.append((60 + self.position*self.tab_width, y + 270))
+            self.resource_text_rects_2.append((60 + self.position*self.tab_width, y + self.robbed_shift))
             self.resource_numbers_texts_rects.append((self.position*self.tab_width + shift, y))
-            self.robbed_numbers_texts_rects.append((self.position*self.tab_width + shift, y + 270))
+            self.robbed_numbers_texts_rects.append((self.position*self.tab_width + shift, y + self.robbed_shift))
             self.expected_numbers_texts_rects.append((self.position*self.tab_width + shift_e, y))
+            
+        if self.mode == 6:
+            self.gold_text = self.tiny_font.render('Gold', False, self.font_colour)
+            self.gold_text_rects = [(60 + self.position*self.tab_width, 370), (60 + self.position*self.tab_width, 370 + self.robbed_shift)]
+            self.gold_numbers_texts_rects = [(self.position*self.tab_width + shift, 370), (self.position*self.tab_width + shift, 370 + self.robbed_shift), (self.position*self.tab_width + shift_e, 370)]
+
             
     def create_numbers(self):
         
-        total = self.wood_count + self.brick_count + self.sheep_count + self.wheat_count + self.rock_count
+        total = self.wood_count + self.brick_count + self.sheep_count + self.wheat_count + self.rock_count + self.gold_count
         self.resource_numbers_texts = [self.tiny_font.render(str(self.wood_count), False, self.font_colour), self.tiny_font.render(str(self.brick_count), False, self.font_colour), self.tiny_font.render(str(self.sheep_count), False, self.font_colour), self.tiny_font.render(str(self.wheat_count), False, self.font_colour), self.tiny_font.render(str(self.rock_count), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
         
-        total = self.wood_robbed + self.brick_robbed + self.sheep_robbed + self.wheat_robbed + self.rock_robbed
+        total = self.wood_robbed + self.brick_robbed + self.sheep_robbed + self.wheat_robbed + self.rock_robbed + self.gold_robbed
         self.robbed_numbers_texts = [self.tiny_font.render(str(self.wood_robbed), False, self.font_colour), self.tiny_font.render(str(self.brick_robbed), False, self.font_colour), self.tiny_font.render(str(self.sheep_robbed), False, self.font_colour), self.tiny_font.render(str(self.wheat_robbed), False, self.font_colour), self.tiny_font.render(str(self.rock_robbed), False, self.font_colour), self.tiny_font.render(str(total), False, self.font_colour)]
         
-        total = self.wood_exp + self.brick_exp + self.sheep_exp + self.wheat_exp + self.rock_exp
+        total = self.wood_exp + self.brick_exp + self.sheep_exp + self.wheat_exp + self.rock_exp + self.gold_exp
         self.expected_numbers_texts = [self.tiny_font.render(str(np.round(self.wood_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.brick_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.sheep_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.wheat_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(np.round(self.rock_exp, decimals = 1)), False, self.font_colour), self.tiny_font.render(str(int(np.round(total, decimals = 0))), False, self.font_colour)]
+    
+        if self.mode == 6:
+            self.gold_numbers_texts = [self.tiny_font.render(str(self.gold_count), False, self.font_colour),
+                                       self.tiny_font.render(str(self.gold_robbed), False, self.font_colour),
+                                       self.tiny_font.render(str(np.round(self.gold_exp, decimals = 1)), False, self.font_colour)]
     
     def set_zero(self):
         
@@ -297,18 +353,21 @@ class Total_Tab:
         self.sheep_count = 0
         self.wheat_count = 0
         self.rock_count = 0
+        self.gold_count = 0
         
         self.wood_exp = 0
         self.brick_exp = 0
         self.sheep_exp = 0
         self.wheat_exp = 0
         self.rock_exp = 0
+        self.gold_exp = 0
         
         self.wood_robbed = 0
         self.brick_robbed = 0
         self.sheep_robbed = 0
         self.wheat_robbed = 0
         self.rock_robbed = 0
+        self.gold_robbed = 0
     
     def update(self, players):
         
@@ -320,18 +379,21 @@ class Total_Tab:
             self.sheep_count += player.sheep_count
             self.wheat_count += player.wheat_count
             self.rock_count += player.rock_count
+            self.gold_count += player.gold_count
             
             self.wood_exp += player.wood_exp
             self.brick_exp += player.brick_exp
             self.sheep_exp += player.sheep_exp
             self.wheat_exp += player.wheat_exp
             self.rock_exp += player.rock_exp
+            self.gold_exp += player.gold_exp
             
             self.wood_robbed += player.wood_robbed
             self.brick_robbed += player.brick_robbed
             self.sheep_robbed += player.sheep_robbed
             self.wheat_robbed += player.wheat_robbed
             self.rock_robbed += player.rock_robbed
+            self.gold_robbed += player.gold_robbed
             
         self.create_numbers()
     
@@ -352,6 +414,14 @@ class Total_Tab:
             
         for i in range(len(self.subtitles_rects)):
             surface.blit(self.subtitles_texts[i], self.subtitles_rects[i])
+            
+        if self.mode == 6:
+            for i in range(len(self.gold_text_rects)):
+                surface.blit(self.gold_text, self.gold_text_rects[i])
+                
+            for i in range(len(self.gold_numbers_texts)):
+                surface.blit(self.gold_numbers_texts[i], self.gold_numbers_texts_rects[i])
+        
         
 def get_player_info(Default = False):  
     
@@ -382,7 +452,11 @@ class Player_Map_Button:
         self.colour = self.player.COLOUR
         self.font_colour = self.player.font_colour
         self.height = self.MT.height/6
+        
         self.width = self.MT.width*11/48
+        if self.player.mode == 6:
+            self.width = self.width*(23/32)
+            
         self.x = self.MT.x + self.MT.width - self.width
         self.y = self.MT.y + self.height*self.position
         
@@ -438,8 +512,13 @@ class Clear_Button:
         
         self.colour = (250,250,250)
         self.font_colour = (20,20,20)
+        
         self.height = self.MT.height/6
         self.width = self.MT.width*11/48
+        if len(self.con['Players']) > 0:
+            if self.con['Players'][0].mode == 6:
+                self.width = self.width*(23/32)
+                
         self.x = self.MT.x
         self.y = self.MT.y + self.height
         
@@ -484,8 +563,13 @@ class Robber_Map_Button:
         
         self.colour = (50,50,50)
         self.font_colour = (250,250,250)
+        
         self.height = self.MT.height/6
         self.width = self.MT.width*11/48
+        if len(self.con['Players']) > 0:
+            if self.con['Players'][0].mode == 6:
+                #self.width = self.width*(23/32)
+                pass
         self.x = self.MT.x
         self.y = self.MT.y
         

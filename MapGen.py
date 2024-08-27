@@ -46,6 +46,10 @@ class Hexagon:
             self.colour = (172,91,38)
         elif self.resource == 'wheat':
             self.colour = (237,187,64)
+        elif self.resource == 'gold':
+            self.colour = (176,123,0)
+        elif self.resource == 'desert':
+            self.colour = (250,250,210)
         else:
             self.colour = (255,255,255)
             
@@ -88,28 +92,60 @@ class Hexagon:
 
 
 
-def seed_maker():
-    temp = []
-    for i in range(5):
-        temp.append('wood')
-    for i in range(4):
-        temp.append('brick')
-    for i in range(5):
-        temp.append('sheep')
-    for i in range(4):
-        temp.append('rock')
-    for i in range(5):
-        temp.append('wheat')
-    for i in range(19):
-        temp.append('sea')
+def seed_maker(mode):
+    
+    if mode == 4:
+        temp = []
+        for i in range(5):
+            temp.append('wood')
+        for i in range(4):
+            temp.append('brick')
+        for i in range(5):
+            temp.append('sheep')
+        for i in range(4):
+            temp.append('rock')
+        for i in range(5):
+            temp.append('wheat')
+        for i in range(19):
+            temp.append('sea')
+            
+        random.shuffle(temp)
         
-    random.shuffle(temp)
+        numbers = [2,3,3,3,4,4,4,5,5,5,6,6,8,8,9,9,9,10,10,10,11,11,12]
+        
+        random.shuffle(numbers)
+        
+        return temp, numbers
     
-    numbers = [2,3,3,3,4,4,4,5,5,5,6,6,8,8,9,9,9,10,10,10,11,11,12]
+    elif mode == 6:
+        temp = []
+        for i in range(7):
+            temp.append('wood')
+        for i in range(7):
+            temp.append('brick')
+        for i in range(7):
+            temp.append('sheep')
+        for i in range(7):
+            temp.append('rock')
+        for i in range(7):
+            temp.append('wheat')
+        for i in range(21):
+            temp.append('sea')
+        for i in range(3):
+            temp.append('desert')
+        for i in range(4):
+            temp.append('gold')
+            
+        random.shuffle(temp)
+        
+        numbers = [2,2,3,3,3,4,4,4,4,5,5,5,5,5,6,6,6,6,6,8,8,8,8,8,9,9,9,9,9,10,10,10,10,11,11,11,11,12,12,12]
+        
+        random.shuffle(numbers)
+        
+        return temp, numbers
+
+
     
-    random.shuffle(numbers)
-    
-    return temp, numbers
 
 
 class Point:
@@ -127,11 +163,8 @@ class Point:
         self.structure = False
         
         self.radius = 4
-        #self.settlement_rect = (self.x - self.radius*4, self.y - self.radius*2, self.radius*8, self.radius*4)
         self.settlement_rect = (self.x - self.radius*6, self.y - self.radius*3, self.radius*12, self.radius*6)
         
-        #self.city_rect_1 = (self.x - self.radius*4, self.y, self.radius*8, self.radius*4)
-        #self.city_rect_2 = (self.x, self.y - self.radius*4, self.radius*4, self.radius*4)
         self.city_rect_1 = (self.x - self.radius*6, self.y, self.radius*12, self.radius*6)
         self.city_rect_2 = (self.x, self.y - self.radius*6, self.radius*6, self.radius*6)
         
@@ -187,21 +220,34 @@ class Point:
             pygame.draw.circle(surface, self.colour, (self.x, self.y), self.radius)
 
 
-def point_generator(edge_length, center):
+def point_generator(edge_length, center, mode):
 
     # GENERATE POINTS -------------------------------------------
         
     short_diagonal = edge_length * math.sqrt(3)
     
+    if mode == 4:
+        starting_x = center[0] - 2*short_diagonal
+        starting_y = center[1] - 11/2*edge_length
+        points_rows = []
+        
+        
+        ranges = [5,6,6,7,7,8,8,9,9,8,8,7,7,6,6,5]
+        xs = [0,1,1,2,2,3,3,4,4,3,3,2,2,1,1,0]
+        ys = [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22]
     
-    starting_x = center[0] - 2*short_diagonal
-    starting_y = center[1] - 11/2*edge_length
-    points_rows = []
-    
-    
-    ranges = [5,6,6,7,7,8,8,9,9,8,8,7,7,6,6,5]
-    xs = [0,1,1,2,2,3,3,4,4,3,3,2,2,1,1,0]
-    ys = [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22]
+    elif mode == 6:
+        short_diagonal = edge_length * math.sqrt(3)
+        
+        
+        starting_x = center[0] - 3.5*short_diagonal
+        starting_y = center[1] - 11/2*edge_length
+        points_rows = []
+        
+        
+        ranges = [8,9,9,10,10,11,11,12,12,11,11,10,10,9,9,8]
+        xs = [0,1,1,2,2,3,3,4,4,3,3,2,2,1,1,0]
+        ys = [0,1,3,4,6,7,9,10,12,13,15,16,18,19,21,22]
     
     for i in range(len(ranges)):
         temp = []
@@ -217,19 +263,29 @@ def point_generator(edge_length, center):
     return points_rows, pure_points_list   
 
 
-def map_maker(edge_length, pure_points_list, points_rows):
+
+
+
+def map_maker(edge_length, pure_points_list, points_rows, mode):
     # GENERATE MAP ------------------------------
     while True:
-        seed, numbers = seed_maker()
+        
+        if mode == 4:
+            columns = [5,6,7,8,7,6,5]
+            mandatory_sea_tiles = [0,7]
+        elif mode == 6:
+            columns = [8,9,10,11,10,9,8]
+            mandatory_sea_tiles = [0,10]
+        
+        seed, numbers = seed_maker(mode)
         HEXES = []
-        columns = [5,6,7,8,7,6,5]
         for i in range(7):
             for j in range(columns[i]):
-                if i == 3 and j in [0,7]:
+                if i == 3 and j in mandatory_sea_tiles:
                     HEXES.append(Hexagon(points_rows, i, j, 'sea', False, edge_length))
                 else:
                     resource = seed[-1]
-                    if resource == 'sea':
+                    if resource in ['sea','desert']:
                         number = False
                     else:
                         number = numbers[-1]
@@ -255,12 +311,14 @@ def map_maker(edge_length, pure_points_list, points_rows):
     return HEXES
     
 
+
 class Map:
-    def __init__(self, edge_length, center):
+    def __init__(self, edge_length, center, mode):
         self.edge_length = edge_length
         self.center = center
+        self.mode = mode
                     
-        self.points_rows, self.pure_points_list = point_generator(self.edge_length, self.center)
+        self.points_rows, self.pure_points_list = point_generator(self.edge_length, self.center, mode)
         
         self.exp_multipliers = []
         for num in [1,2,3,4,5,6,5,4,3,2,1]:
@@ -270,7 +328,7 @@ class Map:
         self.map_analysis()
         
     def gen_map(self):
-        self.HEXES = map_maker(self.edge_length, self.pure_points_list, self.points_rows)
+        self.HEXES = map_maker(self.edge_length, self.pure_points_list, self.points_rows, self.mode)
         
         for point in self.pure_points_list:
             point.clear_hexes()
@@ -337,6 +395,7 @@ class Map:
         
         for point in self.pure_points_list:
             point.draw(surface)
+
 
 
 
