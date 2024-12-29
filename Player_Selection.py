@@ -115,7 +115,8 @@ def Run_Player_Selection():
                       Player_Button('Annie', 'Orange', 2, True),
                       Player_Button('Mark', 'White', 3, True),
                       Player_Button('Smele', 'Green', 4, False),
-                      Player_Button('Hilary', 'Red', 5, False)]
+                      Player_Button('Hilary', 'Red', 5, False),
+                      Player_Button('Simon', 'Blue', 6, False)]
     
     go_button = Go_Button()
     
